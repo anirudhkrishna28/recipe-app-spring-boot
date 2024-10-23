@@ -1,6 +1,7 @@
 package org.example.recipeapp.controllers;
 
 import jakarta.websocket.server.PathParam;
+import org.example.recipeapp.Constants;
 import org.example.recipeapp.models.Recipe;
 import org.example.recipeapp.models.ResponseEntity;
 import org.example.recipeapp.services.RecipeService;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/recipes")
@@ -32,11 +34,19 @@ public class RecipeController {
 
     @PostMapping("/add-recipe")
     public ResponseEntity<Recipe> addRecipe(@RequestBody Recipe recipe) {
-        return new ResponseEntity<>("added recipe", HttpStatus.CREATED.toString(), recipeService.addRecipe(recipe));
+        Recipe response =  recipeService.addRecipe(recipe);
+        String message = response != null ? Constants.RECIPE_ADDED_SUCCESSFULLY : Constants.RECIPE_ALREADY_EXISTS;
+        return new ResponseEntity<>(message, HttpStatus.CREATED.toString(),response);
     }
 
-    @PutMapping("/update-recipe/")
+    @PutMapping("/update-recipe")
     public ResponseEntity<Recipe> updateRecipe(@RequestBody Recipe recipe) {
         return new ResponseEntity<>("updated successfuly", HttpStatus.OK.toString(), recipeService.updateRecipe(recipe.getRecipeId(), recipe));
+    }
+
+    @DeleteMapping("/delete-recipe/{recipe_id}")
+    public ResponseEntity<String> deleteRecipe(@PathVariable("recipe_id") UUID recipe_id) {
+        recipeService.deleteRecipe(recipe_id);
+        return new ResponseEntity<>("deleted successfuly", HttpStatus.OK.toString(), null);
     }
 }

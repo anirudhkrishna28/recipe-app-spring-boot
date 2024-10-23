@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface RecipeRepositoryJpa extends JpaRepository<Recipe, Long> {
+public interface RecipeRepositoryJpa extends JpaRepository<Recipe, UUID> {
 
     @Query(value = "SELECT * FROM recipe", nativeQuery = true)
     List<Recipe> getAllRecipes();
@@ -14,7 +15,8 @@ public interface RecipeRepositoryJpa extends JpaRepository<Recipe, Long> {
     @Query(value = "SELECT * FROM recipe WHERE name ILIKE %?1% ", nativeQuery = true)
     List<Recipe> findRecipeByLike(String name);
 
-    Recipe updateRecipeByRecipeId(Long recipe_id, Recipe recipe);
+    @Query(value = "SELECT * FROM recipe WHERE user_id = ?1", nativeQuery = true)
+    List<Recipe> getRecipesByUser_id(UUID user_id);
 
 
 
